@@ -1,0 +1,886 @@
+version: 4
+data:
+  attachedData:
+    trivet:
+      testSuites: []
+      version: 1
+  graphs:
+    4nlLozpMx6I-kPLo0fZDk:
+      metadata:
+        description: ""
+        id: 4nlLozpMx6I-kPLo0fZDk
+        name: Load All Docs With Embeddings
+      nodes:
+        '[6w_X3pWm-Sw0EKrhiCYww]:readDirectory "Read Directory"':
+          data:
+            filterGlobs:
+              - "**/*.{md,mdx}"
+            ignores: []
+            includeDirectories: false
+            path: /Users/Shared/ironclad/rivet/packages/docs/docs
+            recursive: true
+            relative: true
+            useFilterGlobsInput: false
+            useIgnoresInput: false
+            useIncludeDirectoriesInput: false
+            usePathInput: false
+            useRecursiveInput: false
+            useRelativeInput: false
+          outgoingConnections:
+            - paths->"Subgraph" Lb-jQFpLDbh0jNT8Lf7Ti/doc_path
+            - rootPath->"Subgraph" Lb-jQFpLDbh0jNT8Lf7Ti/base_path
+          visualData: 364.0566768325536/798.4174117759173/825.8123675925876/1//
+        '[Lb-jQFpLDbh0jNT8Lf7Ti]:subGraph "Subgraph"':
+          data:
+            graphId: IdZEu0KB3Gy5uAmy1v5ih
+            useAsGraphPartialOutput: false
+            useErrorOutput: false
+          isSplitRun: true
+          splitRunMax: 999
+          visualData: 1340.013602129327/856.6649767288795/330/4//
+    GoXUlVIqov9kGyWMogiH_:
+      metadata:
+        description: ""
+        id: GoXUlVIqov9kGyWMogiH_
+        name: Test
+      nodes:
+        '[_5fpekX-g7jyG_Fbse6Ci]:prompt "Prompt"':
+          data:
+            computeTokenCount: true
+            enableFunctionCall: false
+            promptText: "{{input}}"
+            type: user
+            useTypeInput: false
+          visualData: 1037/460/280/6//
+        '[omhDCwRx_uxOpixkNn7Rx]:loadDataset "Load Dataset"':
+          data:
+            datasetId: KseTMSf4oL162OSauRufb
+          outgoingConnections:
+            - dataset->"Extract Object Path" xCw7PtsToTzpNxc67za0Q/object
+          visualData: 331/488/280/1//
+        '[xCw7PtsToTzpNxc67za0Q]:extractObjectPath "Extract Object Path"':
+          data:
+            path: $[*].data[1]
+            usePathInput: false
+          outgoingConnections:
+            - all_matches->"Prompt" _5fpekX-g7jyG_Fbse6Ci/input
+          visualData: 679/492/280/5//
+    IdZEu0KB3Gy5uAmy1v5ih:
+      metadata:
+        description: ""
+        id: IdZEu0KB3Gy5uAmy1v5ih
+        name: Load Doc With Embedding
+      nodes:
+        '[JFfbO3ZBYf0WCrx-b_wal]:getEmbedding "Get Embedding"':
+          data:
+            integration: openai
+            useIntegrationInput: false
+          outgoingConnections:
+            - embedding->"Append to Dataset" ScVweJNf3fsTkufDao_U4/embedding
+          visualData: 1136.2738101578398/1042.860009329944/280/10//
+        '[ScVweJNf3fsTkufDao_U4]:appendToDataset "Append to Dataset"':
+          data:
+            datasetId: Jx9J6L-lhSnTyMG9LumLk
+          visualData: 1659.5036492187246/659.3853336380637/280/10//
+        '[a_ol9mInG8-s1aXTVZE4q]:code "Code"':
+          data:
+            code: |-
+              return {
+                  output: {
+                      type: 'string',
+                      value: inputs.input.value.split('/').pop()
+                  }
+              }
+            inputNames: input
+            outputNames: output
+          outgoingConnections:
+            - output->"Append to Dataset" ScVweJNf3fsTkufDao_U4/id
+            - output->"Text" xvU3TNqUqRCmox4drRbq4/file_name
+          visualData: 710.6435339976213/349/230/14//
+        '[rabII95K1wjMUuQMSG9G5]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: doc_path
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Code" a_ol9mInG8-s1aXTVZE4q/input
+            - data->"Text" xe2jyroEU4ZuR5b-qDS5j/path
+            - data->"Text" xvU3TNqUqRCmox4drRbq4/path
+          visualData: -516/615/330/15//
+        '[rtjGa_VXxInWhlg7JKG1z]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: base_path
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"Text" xe2jyroEU4ZuR5b-qDS5j/base_path
+          visualData: -517/438/330/16//
+        '[xe2jyroEU4ZuR5b-qDS5j]:text "Text"':
+          data:
+            text: "{{base_path}}/{{path}}"
+          outgoingConnections:
+            - output->"Read File" xldV4ZBlCzVVLFruYs37B/path
+          visualData: 103/663/330/17//
+        '[xldV4ZBlCzVVLFruYs37B]:readFile "Read File"':
+          data:
+            errorOnMissingFile: false
+            path: ""
+            usePathInput: true
+          outgoingConnections:
+            - content->"Get Embedding" JFfbO3ZBYf0WCrx-b_wal/input
+            - content->"Text" xvU3TNqUqRCmox4drRbq4/content
+          visualData: 685/684.1293394762555/280/10//
+        '[xvU3TNqUqRCmox4drRbq4]:text "Text"':
+          data:
+            text: >-
+              This is the documentation file named `{{file_name}}` at the path
+              `{{path}}`:
+
+
+              {{content}}
+          outgoingConnections:
+            - output->"Append to Dataset" ScVweJNf3fsTkufDao_U4/data
+          visualData: 1132/503/330/13//
+    LI0dDhP60sMj16qPxQ1ix:
+      metadata:
+        description: ""
+        id: LI0dDhP60sMj16qPxQ1ix
+        name: All Nodes
+      nodes:
+        '[2pN7GLYcPSWuLoUcBavV2]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: all_node_descriptions
+          visualData: 1975.3425943865402/423.1185261920509/330/18//
+        '[5gIXo8f4V3QhwyOubGrBE]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: all_node_names
+          visualData: 1971.2503205086207/181.6743673947875/330/17//
+        '[7PSZVQANlsEZzi7xVu6NY]:prompt "Prompt"':
+          data:
+            enableFunctionCall: false
+            promptText: "{{input}}"
+            type: user
+            useTypeInput: false
+          outgoingConnections:
+            - output->"Graph Output" 5gIXo8f4V3QhwyOubGrBE/value
+          visualData: 1539.1061990002984/199.6803724576343/280/15//
+        '[7o7ye6Up8zJhLyOzXeqxU]:extractObjectPath "Extract Object Path"':
+          data:
+            path: $[*].data[0]
+            usePathInput: false
+          outgoingConnections:
+            - match->"Join" arZbXSKhOsTb4wvv2gnN5/input1
+          visualData: 692.9137311849271/220.5700492636485/280/12//
+        '[9BiYnqdKKiYGeSkBzC8po]:prompt "Prompt"':
+          data:
+            computeTokenCount: true
+            enableFunctionCall: false
+            promptText: "{{input}}"
+            type: user
+            useTypeInput: false
+          outgoingConnections:
+            - output->"Graph Output" 2pN7GLYcPSWuLoUcBavV2/value
+          visualData: 1555.9003277202205/417.4403516696349/280/10//
+        '[Lr9wEKhl83DF7bz4uefkd]:extractObjectPath "Extract Object Path"':
+          data:
+            path: $[*].data[1]
+            usePathInput: false
+          outgoingConnections:
+            - all_matches->"Join" sD2yEEDTDi594Rsmdy-zg/input1
+          visualData: 698.6429146140147/438.8004395870437/280/8//
+        '[arFSvbg8DU_xlDVS3PMDv]:loadDataset "Load Dataset"':
+          data:
+            datasetId: KseTMSf4oL162OSauRufb
+          outgoingConnections:
+            - dataset->"Extract Object Path" 7o7ye6Up8zJhLyOzXeqxU/object
+            - dataset->"Extract Object Path" Lr9wEKhl83DF7bz4uefkd/object
+          visualData: 331/488/280/1//
+        '[arZbXSKhOsTb4wvv2gnN5]:join "Join"':
+          data:
+            flatten: true
+            joinString: "\n"
+          outgoingConnections:
+            - output->"Prompt" 7PSZVQANlsEZzi7xVu6NY/input
+          visualData: 1183.896826396867/231.60010870540808/180/14//
+        '[sD2yEEDTDi594Rsmdy-zg]:join "Join"':
+          data:
+            flatten: true
+            joinString: "\n\n"
+          outgoingConnections:
+            - output->"Prompt" 9BiYnqdKKiYGeSkBzC8po/input
+          visualData: 1182.259916845699/441.12453125489765/180/11//
+    OVMFON3vS14cB61EUAwC3:
+      metadata:
+        description: ""
+        id: OVMFON3vS14cB61EUAwC3
+        name: RAG Query Plus (Subgraph)
+      nodes:
+        '[-5e_VsUJealTFeQwi4sga]:comment "Comment"':
+          data:
+            backgroundColor: rgba(0,0,0,0.05)
+            color: rgba(255,255,255,1)
+            height: 891.6545115402616
+            text: Just plop them all together in a big prompt to give the LLM a bunch of
+              context on relevant things
+          visualData: 1599.313759105983/230.294295021381/641.563394730671/74//
+        '[1MbVbd-6P08Gt2xEv8F3e]:prompt "Prompt"':
+          data:
+            enableFunctionCall: false
+            promptText: "{{input}}"
+            type: user
+            useTypeInput: false
+          outgoingConnections:
+            - output->"Assemble Prompt" beZTBIgd32jGKqN6Efkb6/message2
+          visualData: 2516.551356174936/1109.2508644798088/280/75//
+        '[2DmXXun7eT2pKmX3P-4jq]:comment "Comment"':
+          data:
+            backgroundColor: rgba(0,0,0,0.05)
+            color: rgba(255,255,255,1)
+            height: 890.2930239429868
+            text: KNN search the Data, `Questions For Doc Pages`, and `Node Summaries`
+              datasets to get the most relevant information
+          visualData: 281.36656125983114/281.48300703554685/1108.0423322469715/72//
+        '[8RPhQhwIvPT0o6FS6ikZ6]:extractObjectPath "Extract Object Path"':
+          data:
+            path: $[*].data[1]
+            usePathInput: false
+          outgoingConnections:
+            - all_matches->"Text" f05meoeNhXPEpNe2BGONQ/data2
+          visualData: 1074.268103587706/679.7596241376345/280/68//
+        '[D6IFU6TMfyaQoGx9otaRg]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: model
+            useDefaultValueInput: false
+          outgoingConnections:
+            - data->"If/Else" olkWbJD5EVpGzyVd8Z7fk/if
+            - data->"If/Else" olkWbJD5EVpGzyVd8Z7fk/true
+          visualData: 2601.1047021315244/173.71883393031672/330/75//
+        '[NTMum495AZrOxX-RXwUuf]:extractObjectPath "Extract Object Path"':
+          data:
+            path: $[*].data[1]
+            usePathInput: false
+          outgoingConnections:
+            - all_matches->"Text" f05meoeNhXPEpNe2BGONQ/data3
+          visualData: 1086.604382039018/916.7684594915704/280/30//
+        '[Pg03hwofnHrRFOrWnrJ_4]:prompt "Prompt"':
+          data:
+            enableFunctionCall: false
+            promptText: "{{input}}"
+            type: system
+            useTypeInput: false
+          outgoingConnections:
+            - output->"Assemble Prompt" beZTBIgd32jGKqN6Efkb6/message1
+          visualData: 2546.864180247834/557.5316125070906/280/75//
+        '[SedHDFaMCgj85HKgVGrS1]:text "Text"':
+          data:
+            text: >-
+              You are an interactive documentation AI for the program called
+              Rivet. The user will ask you questions about Rivet, and you will
+              answer those questions to the best of your ability.
+
+
+              If you do not know the answer to a question, you tell the user that you do not know, and to check the Rivet documentation manually, or check the Rivet Discord for an answer.
+
+
+              You do not guess at answers, and you do not make up answers. If the question is not completely answered by existing documentation, you say that you do not know.
+          outgoingConnections:
+            - output->"Chat" a65X6fcItmiROiBa0l05S/systemPrompt
+          visualData: -1782.9357574704304/-69.78963387126534/330/59//
+        '[TA_Wh92th_uJUMw1yLgSC]:extractObjectPath "Extract Object Path"':
+          data:
+            path: $[*].data[0]
+            usePathInput: false
+          outgoingConnections:
+            - all_matches->"Text" f05meoeNhXPEpNe2BGONQ/data1
+          visualData: 1074.0758586476184/440.8763813946561/280/67//
+        '[VAnfj8mNJ2MU0z8gFW2mq]:datasetNearestNeighbors "KNN Dataset"':
+          data:
+            datasetId: 72_YKXzOZsRXC_FFnnVrm
+            k: 5
+          outgoingConnections:
+            - nearestNeighbors->"Extract Object Path"
+              8RPhQhwIvPT0o6FS6ikZ6/object
+          visualData: 748.5618020700151/688.4653875948276/280/64//
+        '[VUZ2ytYNTswIcKu4Pb6U3]:chunk "Chunk"':
+          data:
+            model: gpt-3.5-turbo
+            numTokensPerChunk: 14000
+            overlap: 0
+            useModelInput: false
+          outgoingConnections:
+            - first->"Prompt" Pg03hwofnHrRFOrWnrJ_4/input
+          visualData: 1842.2590161069477/757.9372898803061/230/25//
+        '[Vpo-BUIj6sTBcWD7cT_sX]:datasetNearestNeighbors "KNN Dataset"':
+          data:
+            datasetId: Jx9J6L-lhSnTyMG9LumLk
+            k: 5
+          outgoingConnections:
+            - nearestNeighbors->"Extract Object Path"
+              TA_Wh92th_uJUMw1yLgSC/object
+          visualData: 738.6734013938811/438.5902465531525/280/66//
+        '[XLiMJSKzfZnqmunLOEIAZ]:datasetNearestNeighbors "KNN Dataset"':
+          data:
+            datasetId: KseTMSf4oL162OSauRufb
+            k: 15
+          outgoingConnections:
+            - nearestNeighbors->"Extract Object Path"
+              NTMum495AZrOxX-RXwUuf/object
+          visualData: 748.5618020700151/888.4653875948276/280/28//
+        '[a3dxE7WrDL87M96DSMtZ4]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: input
+            useDefaultValueInput: true
+          outgoingConnections:
+            - data->"Get Embedding" zBO2Y2fH0xZIFmxb50U3z/input
+            - data->"Prompt" 1MbVbd-6P08Gt2xEv8F3e/input
+          visualData: -336.46639162604083/536.097993865648/330/64//
+        '[a65X6fcItmiROiBa0l05S]:chat "Chat"':
+          data:
+            cache: false
+            enableFunctionUse: false
+            frequencyPenalty: 0
+            maxTokens: 1024
+            model: gpt-3.5-turbo-16k-0613
+            presencePenalty: 0
+            stop: ""
+            temperature: 0.5
+            top_p: 1
+            useAsGraphPartialOutput: true
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: true
+            usePresencePenaltyInput: false
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+            useUserInput: false
+          outgoingConnections:
+            - response->"Graph Output" hcTJT2LRjWpvxiAFRJnnV/value
+          visualData: 3531.69720966531/474.1317239595227/571.1818418921644/75//
+        '[bSRzSqNyYe5zI0wfLEp9v]:text "Text"':
+          data:
+            text: |
+              I want my agent to search google
+          outgoingConnections:
+            - output->"Graph Input" a3dxE7WrDL87M96DSMtZ4/default
+          visualData: -919.374519279854/542.6865405023664/330/64//
+        '[beZTBIgd32jGKqN6Efkb6]:assemblePrompt "Assemble Prompt"':
+          outgoingConnections:
+            - prompt->"Chat" a65X6fcItmiROiBa0l05S/prompt
+          visualData: 2985.3127709303753/591.2318741579817/280/75//
+        '[f05meoeNhXPEpNe2BGONQ]:text "Text"':
+          data:
+            text: >+
+              All nodes in rivet are listed here:
+
+
+              {{all_nodes}}
+
+
+              The follow are excerpts from the Rivet documentation that may help your answer:
+
+
+              {{data3}}
+
+
+              {{data1}}
+
+
+              {{data2}}
+
+          outgoingConnections:
+            - output->"Chunk" VUZ2ytYNTswIcKu4Pb6U3/input
+          visualData: 1784.3076164009758/362.58301118697443/330/73//
+        '[gsZ3_xq036f9zcSk9pRAr]:text "Text"':
+          data:
+            text: gpt-3.5-turbo-16k-0613
+          outgoingConnections:
+            - output->"If/Else" olkWbJD5EVpGzyVd8Z7fk/false
+          visualData: 2597.824395206908/333.36043759500495/330/75//
+        '[hcTJT2LRjWpvxiAFRJnnV]:graphOutput "Graph Output"':
+          data:
+            dataType: string
+            id: output
+          visualData: 4211.847797831485/519.4838560271259/330/75//
+        '[lefl0zl4ATEyY32zJkKYH]:comment "Comment"':
+          data:
+            backgroundColor: rgba(0,0,0,0.05)
+            color: rgba(255,255,255,1)
+            height: 408.56157612555535
+            text: |-
+              Give 
+
+              1. Context
+              2. User question
+          visualData: 2949.6612993210265/449.9987949041332/430.85264630510756/77//
+        '[olkWbJD5EVpGzyVd8Z7fk]:ifElse "If/Else"':
+          outgoingConnections:
+            - output->"Chat" a65X6fcItmiROiBa0l05S/model
+          visualData: 3171.8781070148616/250.25932883804393/205/75//
+        '[qRBzKsn_lZaIuAk5WcR6Z]:subGraph "Subgraph"':
+          data:
+            graphId: LI0dDhP60sMj16qPxQ1ix
+            useAsGraphPartialOutput: false
+            useErrorOutput: false
+          outgoingConnections:
+            - all_node_names->"Text" f05meoeNhXPEpNe2BGONQ/all_nodes
+          visualData: 1119.827347667512/-32.15352570139825/330/54//
+        '[zBO2Y2fH0xZIFmxb50U3z]:getEmbedding "Get Embedding"':
+          data:
+            integration: openai
+            useIntegrationInput: false
+          outgoingConnections:
+            - embedding->"KNN Dataset" VAnfj8mNJ2MU0z8gFW2mq/embedding
+            - embedding->"KNN Dataset" Vpo-BUIj6sTBcWD7cT_sX/embedding
+            - embedding->"KNN Dataset" XLiMJSKzfZnqmunLOEIAZ/embedding
+          visualData: 314.17551697298336/542.956039127741/280/36//
+    dlLygs2rgHqx2-BFQ2PIW:
+      metadata:
+        description: ""
+        id: dlLygs2rgHqx2-BFQ2PIW
+        name: RAG Query
+      nodes:
+        '[26-bIMmJY8fLnFXArGdJS]:datasetNearestNeighbors "KNN Dataset"':
+          data:
+            datasetId: Jx9J6L-lhSnTyMG9LumLk
+            k: 10
+          outgoingConnections:
+            - nearestNeighbors->"Extract Object Path"
+              FGdvoiwF7xyepz0nP9Xz8/object
+          visualData: 1123/502/280/6//
+        '[2p4dKVtO6t9jJYVykMHjg]:prompt "Prompt"':
+          data:
+            enableFunctionCall: false
+            promptText: "{{input}}"
+            type: system
+            useTypeInput: false
+          outgoingConnections:
+            - output->"Assemble Prompt" jbKPGvldCrBHm1dPvrDdD/message1
+          visualData: 2261.7235026465987/630.0929898906568/280/22//
+        '[6MWuDrUMa8Ghx1XFPX5EY]:getEmbedding "Get Embedding"':
+          data:
+            integration: openai
+            useIntegrationInput: false
+          outgoingConnections:
+            - embedding->"KNN Dataset" 26-bIMmJY8fLnFXArGdJS/embedding
+          visualData: 773/517/280/4//
+        '[7HxY4FErmokipWm8escDI]:text "Text"':
+          data:
+            text: >-
+              The follow are excerpts from the Rivet documentation that may help
+              your answer:
+
+
+              {{data}}
+          outgoingConnections:
+            - output->"Chunk" x34vFGAQEsTev6fQwR7xa/input
+          visualData: 1799/530/330/10//
+        '[FGdvoiwF7xyepz0nP9Xz8]:extractObjectPath "Extract Object Path"':
+          data:
+            path: $[*].data[0]
+            usePathInput: false
+          outgoingConnections:
+            - all_matches->"Text" 7HxY4FErmokipWm8escDI/data
+          visualData: 1455/520/280/9//
+        '[XQ3mSgtaelu3x08YZIjJJ]:prompt "Prompt"':
+          data:
+            enableFunctionCall: false
+            promptText: "{{input}}"
+            type: user
+            useTypeInput: false
+          outgoingConnections:
+            - output->"Assemble Prompt" jbKPGvldCrBHm1dPvrDdD/message2
+          visualData: 2260.305860360816/463.04459490889417/280/15//
+        '[YLKPFPKZArYfVOvmM0S2G]:text "Text"':
+          data:
+            text: >-
+              You are an interactive documentation AI for the program called
+              Rivet. The user will ask you questions about Rivet, and you will
+              answer those questions to the best of your ability.
+
+
+              If you do not know the answer to a question, you tell the user that you do not know, and to check the Rivet documentation manually, or check the Rivet Discord for an answer.
+          outgoingConnections:
+            - output->"Chat" jlQycawyaX93khYQYiBIb/systemPrompt
+          visualData: 1896/269/330/12//
+        '[bME-ps_nhMRs2jpBHEBjq]:userInput "User Input"':
+          data:
+            prompt: Please ask your question for the Rivet Doc Agent
+            useInput: false
+          outgoingConnections:
+            - output->"Get Embedding" 6MWuDrUMa8Ghx1XFPX5EY/input
+            - output->"Prompt" XQ3mSgtaelu3x08YZIjJJ/input
+          visualData: 396/502/280/1//
+        '[jbKPGvldCrBHm1dPvrDdD]:assemblePrompt "Assemble Prompt"':
+          outgoingConnections:
+            - prompt->"Chat" jlQycawyaX93khYQYiBIb/prompt
+          visualData: 2799.2296205455423/601.7295770765736/280/17//
+        '[jlQycawyaX93khYQYiBIb]:chat "Chat"':
+          data:
+            cache: false
+            enableFunctionUse: false
+            frequencyPenalty: 0
+            maxTokens: 1024
+            model: gpt-4
+            presencePenalty: 0
+            stop: ""
+            temperature: 0.5
+            top_p: 1
+            useAsGraphPartialOutput: true
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: false
+            usePresencePenaltyInput: false
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+            useUserInput: false
+          visualData: 3345.614059280477/484.62942687811466/571.1818418921644/16//
+        '[x34vFGAQEsTev6fQwR7xa]:chunk "Chunk"':
+          data:
+            model: gpt-3.5-turbo
+            numTokensPerChunk: 6000
+            overlap: 0
+            useModelInput: false
+          outgoingConnections:
+            - first->"Prompt" 2p4dKVtO6t9jJYVykMHjg/input
+          visualData: 1842.2590161069477/757.9372898803061/230/25//
+    hX7v2nG4nAuAIWVJIvOZX:
+      metadata:
+        description: ""
+        id: hX7v2nG4nAuAIWVJIvOZX
+        name: Summary Of Each Node
+      nodes:
+        '[BiUded3GLCMG_gnqC-1sE]:getEmbedding "Get Embedding"':
+          data:
+            integration: openai
+            useIntegrationInput: false
+          isSplitRun: true
+          outgoingConnections:
+            - embedding->"Append to Dataset" QG2cVBakFLISPctVlPd91/embedding
+          splitRunMax: 99
+          visualData: 2267.929408424459/801.5113434519822/280/9//
+        '[DWJ2_NYUeZX6sfn6CDytj]:array "Array"':
+          data:
+            flatten: false
+            flattenDeep: false
+          isSplitRun: true
+          outgoingConnections:
+            - output->"Append to Dataset" QG2cVBakFLISPctVlPd91/data
+          splitRunMax: 99
+          visualData: 2281.1176923165185/535.7166988581463/230/11//
+        '[MqGIvgKTpg8L3WGl6GqLO]:text "Text"':
+          data:
+            text: gpt-4-32k
+          outgoingConnections:
+            - output->"Subgraph" nfgTRxee8Fl-YogSl1ETl/model
+          visualData: 1142.465016035729/343.10171009135547/330/13//
+        '[QG2cVBakFLISPctVlPd91]:appendToDataset "Append to Dataset"':
+          data:
+            datasetId: KseTMSf4oL162OSauRufb
+          isSplitRun: true
+          splitRunMax: 99
+          visualData: 2838.5561238128334/628.5251448031488/280/7//
+        '[fAc3z1xSwKxxg69uA5Fdq]:extractRegex "Extract Regex"':
+          data:
+            errorOnFailed: false
+            regex: "- (.+)"
+            useRegexInput: false
+          outgoingConnections:
+            - matches->"Array" DWJ2_NYUeZX6sfn6CDytj/input1
+            - matches->"Text" mtSpwjRmt9_2zTjNZrlpt/node
+          visualData: 989/575/280/2//
+        '[hPhLD-S6sFwxhl8Ji9w-j]:text "Text"':
+          data:
+            text: |-
+              List all nodes in Rivet, one per line like:
+
+              - Node 1
+              - Node 2
+          outgoingConnections:
+            - output->"Subgraph" wTvD7mC_gtqpQmnBgf_Pz/input
+          visualData: 154/516/330/1//
+        '[mtSpwjRmt9_2zTjNZrlpt]:text "Text"':
+          data:
+            text: >-
+              Describe to me the {{node}} node in Rivet. I want about 2
+              paragraphs, with 3-5 sentences per paragraph.
+
+
+              Focus on these things:
+
+
+              - What is the {{node}} node?
+
+              - Why would I want to use the {{node}} node?
+
+              - When would I want to use the {{node}} node?
+
+              - What are the inputs and outputs of the {{node}} node?
+
+
+              Describe the node as if you were writing documentation for Rivet.
+          isSplitRun: true
+          outgoingConnections:
+            - output->"Subgraph" nfgTRxee8Fl-YogSl1ETl/input
+          splitRunMax: 99
+          visualData: 1344/577/330/4//
+        '[nfgTRxee8Fl-YogSl1ETl]:subGraph "Subgraph"':
+          data:
+            graphId: OVMFON3vS14cB61EUAwC3
+            useAsGraphPartialOutput: false
+            useErrorOutput: false
+          isSplitRun: true
+          outgoingConnections:
+            - output->"Array" DWJ2_NYUeZX6sfn6CDytj/input2
+            - output->"Get Embedding" BiUded3GLCMG_gnqC-1sE/input
+          splitRunMax: 99
+          visualData: 1787.4720620546404/589.9954387027984/330/12//
+        '[wTvD7mC_gtqpQmnBgf_Pz]:subGraph "Subgraph"':
+          data:
+            graphId: OVMFON3vS14cB61EUAwC3
+            useAsGraphPartialOutput: false
+            useErrorOutput: false
+          outgoingConnections:
+            - output->"Extract Regex" fAc3z1xSwKxxg69uA5Fdq/input
+          visualData: 581/571/330/null//
+    q5--5Ly8Zp3WoJm6LyZO_:
+      metadata:
+        description: ""
+        id: q5--5Ly8Zp3WoJm6LyZO_
+        name: Similar Questions
+      nodes:
+        '[6VA9-Rl0TpdFQyhp5SwGb]:extractObjectPath "Extract Object Path"':
+          data:
+            path: $[*].data[0]
+            usePathInput: false
+          visualData: 1071/639/280/3//
+        '[EaH1a7hYx__SH_YIgftlT]:datasetNearestNeighbors "KNN Dataset"':
+          data:
+            datasetId: 72_YKXzOZsRXC_FFnnVrm
+            k: 25
+          outgoingConnections:
+            - nearestNeighbors->"Extract Object Path"
+              6VA9-Rl0TpdFQyhp5SwGb/object
+          visualData: 669/640/280/null//
+        '[RWXOEbiVQjj_6J4MnZY5o]:userInput "User Input"':
+          data:
+            prompt: This is an example question?
+            useInput: false
+          outgoingConnections:
+            - output->"Get Embedding" kOjfOMWD0J--p1RBidjZw/input
+          visualData: -84/654/280/2//
+        '[kOjfOMWD0J--p1RBidjZw]:getEmbedding "Get Embedding"':
+          data:
+            integration: openai
+            useIntegrationInput: false
+          outgoingConnections:
+            - embedding->"KNN Dataset" EaH1a7hYx__SH_YIgftlT/embedding
+          visualData: 309/665/280/1//
+    rXv0UNRUxYJZDxgEW9LLA:
+      metadata:
+        description: ""
+        id: rXv0UNRUxYJZDxgEW9LLA
+        name: Come Up With Questions - Single
+      nodes:
+        '[0RxmVVgdxFH_tUN80lGpF]:graphInput "Graph Input"':
+          data:
+            dataType: string
+            id: docs_page
+            useDefaultValueInput: true
+          outgoingConnections:
+            - data->"Array" qjbwUbRopEcBDFtDP8n_x/input2
+            - data->"Assemble Prompt" 6bi424EsvDuVzeBUtc5Vt/message1
+          visualData: 609/661/330/null//
+        '[4DqazKmYDUQjmNeZOf16X]:extractObjectPath "Extract Object Path"':
+          data:
+            path: $[1].data[0]
+            usePathInput: false
+          outgoingConnections:
+            - match->"Graph Input" 0RxmVVgdxFH_tUN80lGpF/default
+          visualData: 229.6839663922294/655.5571547872204/280/2//
+        '[6bi424EsvDuVzeBUtc5Vt]:assemblePrompt "Assemble Prompt"':
+          outgoingConnections:
+            - prompt->"Chat" avRsXz-qd3TLEJo-ftMKy/prompt
+          visualData: 1589.7056267771625/651.7044022082262/280/4//
+        '[Ht4ruW1Af86QX76U8XDOm]:appendToDataset "Append to Dataset"':
+          data:
+            datasetId: 72_YKXzOZsRXC_FFnnVrm
+          isSplitRun: true
+          splitRunMax: 999
+          visualData: 3981.6783259412805/603.3490775963764/280/12//
+        '[Vgkr32XwwfTsGzAY-qbRb]:loadDataset "Load Dataset"':
+          data:
+            datasetId: Jx9J6L-lhSnTyMG9LumLk
+          outgoingConnections:
+            - dataset->"Extract Object Path" 4DqazKmYDUQjmNeZOf16X/object
+          visualData: -171.00230182316164/674.8209176821911/280/1//
+        '[avRsXz-qd3TLEJo-ftMKy]:chat "Chat"':
+          data:
+            cache: false
+            enableFunctionUse: false
+            frequencyPenalty: 0
+            maxTokens: 1024
+            model: gpt-4-32k
+            presencePenalty: 0
+            stop: ""
+            temperature: 0.75
+            top_p: 1
+            useAsGraphPartialOutput: true
+            useFrequencyPenaltyInput: false
+            useMaxTokensInput: false
+            useModelInput: false
+            usePresencePenaltyInput: false
+            useStop: false
+            useStopInput: false
+            useTemperatureInput: false
+            useTopP: false
+            useTopPInput: false
+            useUseTopPInput: false
+            useUserInput: false
+          outgoingConnections:
+            - response->"Extract Regex" fVF4jZ5lHod2764YJ4zaY/input
+          visualData: 2028.919420782495/582.3548557863317/981.9534835603149/5//
+        '[fVF4jZ5lHod2764YJ4zaY]:extractRegex "Extract Regex"':
+          data:
+            errorOnFailed: false
+            regex: \d+\. (.+)
+            useRegexInput: false
+          outgoingConnections:
+            - matches->"Array" qjbwUbRopEcBDFtDP8n_x/input1
+            - matches->"Get Embedding" smj9tBc3em3wsx_n-jdTw/input
+          visualData: 3115.6834915752825/581.5446829260112/280/13//
+        '[qjbwUbRopEcBDFtDP8n_x]:array "Array"':
+          data:
+            flatten: false
+            flattenDeep: false
+          isSplitRun: true
+          outgoingConnections:
+            - output->"Append to Dataset" Ht4ruW1Af86QX76U8XDOm/data
+          splitRunMax: 999
+          visualData: 3514.112466314251/522.0436231484573/230/12//
+        '[sFfDgFB4HX5WiFAdaSyFP]:text "Text"':
+          data:
+            text: >-
+              You are a documentation question-generator agent. Given a
+              documentation file, you generate questions and someone might ask
+              about Rivet, which are answered by the documentation file
+              provided. You are creative and thorough.
+
+
+              The following is a primer on Rivet:
+
+
+              Rivet is a powerful Integrated Development Environment (IDE) and library designed for creating AI agents using a visual, graph-based interface. It is made up of two main components: the Rivet Application and the Rivet Core/Rivet Node. The Rivet Application is an editor that allows you to create complex AI prompt chains and agents. It comes with a suite of tools for designing and enhancing AI agents, such as a prompt designer, variations on nodes for A/B testing, and integrated testing to ensure your graphs work as expected for all inputs.
+
+
+              Rivet Core/Rivet Node, on the other hand, are TypeScript libraries that allow you to execute projects generated by the Rivet Application. They provide a simple API for integrating Rivet with your application. This makes it easy to integrate Rivet's AI capabilities into your existing projects. Once you've created a graph in the Rivet App, you can execute it within your application like a function call.
+
+
+              One of the key features of Rivet is its node-based editor. This enables you to create, configure, and debug complex AI prompt chains and AI agent chains visually. This approach makes it easier to understand the flow of data and the state of your AI agent at any point in time. The editor allows you to view the input and output of every node, as well as AI responses in real-time, making it simple to identify and fix issues.
+
+
+              Rivet also offers live debugging of AI chains as they run, allowing you to monitor the state of your AI agent in real-time and quickly identify any issues that may arise. It also supports remote debugging, allowing you to debug AI chains running on a remote server. This is useful for debugging AI agents that are running in a production environment.
+
+
+              Lastly, Rivet features a library of node types to execute common functionality for nodes. Some essential node types include Text, Chat, Match, Loop Controller, Extract YAML, Extract JSON, Chunk, Trim Chat Messages, and External Call. These nodes can be connected together using wires, allowing data to flow between them. Documentation for all nodes can be found in the Node Reference.
+          outgoingConnections:
+            - output->"Chat" avRsXz-qd3TLEJo-ftMKy/systemPrompt
+          visualData: 1561.4774471800986/223.78381461615004/330/9//
+        '[smj9tBc3em3wsx_n-jdTw]:getEmbedding "Get Embedding"':
+          data:
+            integration: openai
+            useIntegrationInput: false
+          isSplitRun: true
+          outgoingConnections:
+            - embedding->"Append to Dataset" Ht4ruW1Af86QX76U8XDOm/embedding
+          splitRunMax: 999
+          visualData: 3496.7947701070925/805.5105601228562/280/12//
+        '[uF_1XpeuhqeRFavj4R1Y2]:text "Text"':
+          data:
+            text: >-
+              Imagine that you are an AI agent tasked with coming up with
+              questions that a user may ask, that are answered by the
+              documentation file in the previous message.
+
+
+              Come up with many questions that someone might ask about Rivet, which are answered by the documentation page in the previous message. Only ask questions that are answered completely by the documentation page provided.
+
+
+              Put your questions in a numbered list.
+
+
+              Come up with 25 questions.
+
+
+              Be very detailed in each question. Do not be vague. Be much more verbose and thorough that someone would normally be when asking a question. This is because we will be generating vector embeddings for each question, so the more words you use in each question, the more data the AI can extract from the question.
+          outgoingConnections:
+            - output->"Assemble Prompt" 6bi424EsvDuVzeBUtc5Vt/message2
+          visualData: 1072.4735930471986/744.1704641040856/330/3//
+    vIDj0GJPXGdM2tG-PZphg:
+      metadata:
+        description: ""
+        id: vIDj0GJPXGdM2tG-PZphg
+        name: Come Up With Questions
+      nodes:
+        '[4IbVne9-1aAAiGm-uDOYs]:loadDataset "Load Dataset"':
+          data:
+            datasetId: Jx9J6L-lhSnTyMG9LumLk
+          outgoingConnections:
+            - dataset->"Extract Object Path" DJLoTYMKcaGeElYs0qWWT/object
+          visualData: -501.93148942673497/455.1154871362114/280/8//
+        '[6mqWXd7ppLGLDZ8IIi38R]:slice "Slice"':
+          data:
+            start: 73
+          outgoingConnections:
+            - output->"Subgraph" f-sbgJggP-do17y1mGavZ/docs_page
+          visualData: 380.0417653448425/466.7581489300339/230/7//
+        '[DJLoTYMKcaGeElYs0qWWT]:extractObjectPath "Extract Object Path"':
+          data:
+            path: $[*].data[0]
+            usePathInput: false
+          outgoingConnections:
+            - all_matches->"Slice" 6mqWXd7ppLGLDZ8IIi38R/input
+          visualData: -84.56767190341509/462.50543096895143/280/6//
+        '[f-sbgJggP-do17y1mGavZ]:subGraph "Subgraph"':
+          data:
+            graphId: rXv0UNRUxYJZDxgEW9LLA
+            useAsGraphPartialOutput: false
+            useErrorOutput: false
+          isSplitRun: true
+          splitRunMax: 999
+          visualData: 1184.8686394796957/509.28532854085836/330/4//
+    wf7LHrfVWeuVbc7JhrI9Y:
+      metadata:
+        description: ""
+        id: wf7LHrfVWeuVbc7JhrI9Y
+        name: RAG Query Plus
+      nodes:
+        '[HWwgjZ3tf7I_GbAXtDMXP]:userInput "User Input"':
+          data:
+            prompt: Please ask your question for the Rivet Doc Agent
+            useInput: false
+          outgoingConnections:
+            - output->"Subgraph" _lBjbuEGSOthvj8CVRr-M/input
+          visualData: -219.87516088444363/534.6676065575456/280/43//
+        '[_lBjbuEGSOthvj8CVRr-M]:subGraph "Subgraph"':
+          data:
+            graphId: OVMFON3vS14cB61EUAwC3
+            useAsGraphPartialOutput: false
+            useErrorOutput: false
+          visualData: 316.76580595614934/550.9636805166514/330/44//
+  metadata:
+    description: ""
+    id: mmMBj2-6yOFRCbPOcE_kG
+    title: Untitled Project
+  plugins: []

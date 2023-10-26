@@ -6,7 +6,7 @@ export const ChatBubble: FC<{
 }> = ({ message }) => {
   return (
     <div
-      className={`p-2 rounded-lg my-2 ${
+      className={`p-2 rounded-lg my-2 whitespace-pre-wrap ${
         message.type === 'user'
           ? 'bg-blue-200 ml-10 text-right'
           : message.type === 'assistant'

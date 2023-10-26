@@ -21,7 +21,7 @@ export const ChatInput: FC<{
           onChange={(e) => setMessage(e.target.value)}
           className="w-full px-8 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
           type="text"
-          placeholder="Type your message..."
+          placeholder="Ask any question about Rivet!"
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
               handleSubmit();

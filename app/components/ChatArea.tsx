@@ -35,15 +35,15 @@ export const ChatArea: FC<{
         {showSettings && <ChatSettings />}
         <div
           ref={chatAreaRef}
-          className="block mt-1 text-lg leading-tight font-medium text-black break-words overflow-y-auto h-96 p-4"
+          className="block mt-1 text-lg leading-tight font-medium text-black break-words overflow-y-auto h-150 p-4"
         >
           {messages.map((message, index) => (
             <ChatBubble key={index} message={message} />
           ))}
           {streamingMessage && (
-            <div className="p-2 rounded-lg my-2 bg-green-200 mr-auto">
-              <p>{streamingMessage}</p>
-            </div>
+            <ChatBubble
+              message={{ type: 'assistant', content: streamingMessage }}
+            />
           )}
         </div>
       </div>

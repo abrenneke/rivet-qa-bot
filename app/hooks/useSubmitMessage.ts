@@ -18,18 +18,6 @@ export function useSubmitMessage({
   const apiKey = useRecoilValue(openaiApiKeyState);
 
   const handleSubmit = async (message: string) => {
-    if (!apiKey.trim()) {
-      setMessages((messages) => [
-        ...messages,
-        {
-          type: 'error',
-          content: 'Please first enter your OpenAI API Key in the settings!',
-        },
-      ]);
-      setWorking(false);
-      return;
-    }
-
     setWorking(true);
 
     const userMessage = { type: 'user', content: message } as const;

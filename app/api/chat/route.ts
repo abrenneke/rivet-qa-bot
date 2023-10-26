@@ -1,5 +1,6 @@
 import * as Rivet from '@ironclad/rivet-node';
 import { resolve } from 'node:path';
+import { readFile } from 'node:fs/promises';
 
 export async function POST(request: Request) {
   const body = await request.json();
@@ -16,7 +17,7 @@ export async function POST(request: Request) {
     });
   }
 
-  const chatMessages = body.messages.map(
+  const chatMessages = (body.messages as unknown[]).map(
     (message: any): Rivet.ChatMessage => ({
       type: message.type as 'user' | 'assistant',
       message: message.content as string,
@@ -25,25 +26,34 @@ export async function POST(request: Request) {
     })
   );
 
+  const dataset = await readFile(
+    resolve('./app/Rivet Docs Analyzer.rivet-data'),
+    'utf8'
+  );
+  const datasetProvider = new Rivet.InMemoryDatasetProvider(
+    Rivet.deserializeDatasets(dataset)
+  );
+
   const project = await Rivet.loadProjectFromFile(
     // Resolve is necessary so that Vercel includes this file in the deployment
-    resolve('./app/ExampleProject.rivet-project')
+    resolve('./app/Rivet Docs Analyzer.rivet-project')
   );
 
   const processor = Rivet.createProcessor(project, {
-    graph: 'Chatbot',
+    graph: 'RAG Query Plus (Subgraph)',
     inputs: {
-      messages: {
-        type: 'chat-message[]',
-        value: chatMessages,
+      input: {
+        type: 'string',
+        value: chatMessages[chatMessages.length - 1].message,
       },
     },
     openAiKey: apiKeyToUse,
+    datasetProvider,
   });
 
   processor.run();
 
-  return new Response(processor.streamNode('E83_3mc1qMmr1qd8qraUf'), {
+  return new Response(processor.streamNode('a65X6fcItmiROiBa0l05S'), {
     headers: {
       'content-type': 'text/event-stream; charset=utf-8',
     },
