@@ -48,6 +48,7 @@ export async function POST(request: Request) {
       },
     },
     openAiKey: apiKeyToUse,
+    openAiOrganization: process.env.OPENAI_ORG_ID,
     datasetProvider,
   });
 
