@@ -21,21 +21,23 @@ export const ChatArea: FC<{
   };
 
   return (
-    <div className="">
-      <div className="">
-        <div className="uppercase tracking-wide text-sm text-indigo-500 font-semibold p-8 flex justify-between items-center">
-          <div>Chatbot</div>
+    <div>
+      <div>
+        <div className="uppercase tracking-wide text-sm text-primary font-semibold p-8 flex justify-between items-center">
+          <div className="text-primary">
+            Rivet Q&A Bot - Ask any question about Rivet!
+          </div>
           <div>
             <FiSettings
               onClick={handleSettingsClick}
-              className="cursor-pointer"
+              className="cursor-pointer text-primary"
             />
           </div>
         </div>
         {showSettings && <ChatSettings />}
         <div
           ref={chatAreaRef}
-          className="block mt-1 text-lg leading-tight font-medium text-black break-words overflow-y-auto h-150 p-4"
+          className="block mt-1 text-lg leading-tight font-medium text-foreground break-words overflow-y-auto h-150 p-4 bg-grey-darker"
         >
           {messages.map((message, index) => (
             <ChatBubble key={index} message={message} />

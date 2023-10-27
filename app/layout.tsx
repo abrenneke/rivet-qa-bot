@@ -19,7 +19,7 @@ export default function RootLayout({
   return (
     <html lang="en" style={{ height: '100%' }}>
       <body
-        className={inter.className}
+        className={`${inter.className} app theme-default`}
         style={{
           height: '100%',
         }}

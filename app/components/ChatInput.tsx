@@ -12,14 +12,14 @@ export const ChatInput: FC<{
   };
 
   return (
-    <div className="border-t-2 border-gray-200 py-2 sm:px-6">
+    <div className="py-2 sm:px-6">
       <div className="flex">
         <input
           autoFocus
           disabled={working}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          className="w-full px-8 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+          className="text-foreground w-full px-8 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 bg-grey-darkerish"
           type="text"
           placeholder="Ask any question about Rivet!"
           onKeyDown={(e) => {
@@ -30,7 +30,7 @@ export const ChatInput: FC<{
         />
         <button
           disabled={working}
-          className="ml-2 px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          className="text-foreground-on-primary ml-2 px-4 py-2 border border-transparent text-sm font-medium rounded-md text-foreground bg-primary hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           onClick={() => handleSubmit()}
         >
           Send

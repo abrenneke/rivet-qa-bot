@@ -8,9 +8,9 @@ export const ChatBubble: FC<{
     <div
       className={`p-2 rounded-lg my-2 whitespace-pre-wrap ${
         message.type === 'user'
-          ? 'bg-blue-200 ml-10 text-right'
+          ? 'bg-primary text-foreground-on-primary ml-10 text-right'
           : message.type === 'assistant'
-          ? 'bg-green-200 mr-10'
+          ? 'bg-grey-light text-grey-darker mr-10'
           : 'bg-red-200 mr-auto'
       }`}
     >
