@@ -1,6 +1,10 @@
-import * as Rivet from '@ironclad/rivet-node';
-import { resolve } from 'node:path';
-import { readFile } from 'node:fs/promises';
+import * as Rivet from '@ironclad/rivet-core';
+
+import rivetProject from '../../Rivet Docs Analyzer.rivet-project';
+import rivetData from '../../Rivet Docs Analyzer.rivet-data';
+import { getSingleNodeStream } from './streaming';
+
+export const runtime = 'edge';
 
 export async function POST(request: Request) {
   const body = await request.json();
@@ -26,35 +30,35 @@ export async function POST(request: Request) {
     })
   );
 
-  const dataset = await readFile(
-    resolve('./app/Rivet Docs Analyzer.rivet-data'),
-    'utf8'
-  );
   const datasetProvider = new Rivet.InMemoryDatasetProvider(
-    Rivet.deserializeDatasets(dataset)
+    Rivet.deserializeDatasets(rivetData)
   );
 
-  const project = await Rivet.loadProjectFromFile(
-    // Resolve is necessary so that Vercel includes this file in the deployment
-    resolve('./app/Rivet Docs Analyzer.rivet-project')
-  );
+  const [project] = Rivet.deserializeProject(rivetProject);
 
-  const processor = Rivet.createProcessor(project, {
-    graph: 'RAG Query Plus (Subgraph)',
-    inputs: {
+  const graphId = Object.values(project.graphs).find(
+    (p) => p.metadata!.name! === 'RAG Query Plus (Subgraph)'
+  )!.metadata!.id!;
+
+  const processor = new Rivet.GraphProcessor(project, graphId);
+
+  processor.processGraph(
+    {
+      settings: {
+        openAiKey: apiKeyToUse,
+        openAiOrganization: process.env.OPENAI_ORG_ID,
+      },
+      datasetProvider,
+    },
+    {
       input: {
         type: 'string',
         value: chatMessages[chatMessages.length - 1].message,
       },
-    },
-    openAiKey: apiKeyToUse,
-    openAiOrganization: process.env.OPENAI_ORG_ID,
-    datasetProvider,
-  });
+    }
+  );
 
-  processor.run();
-
-  return new Response(processor.streamNode('a65X6fcItmiROiBa0l05S'), {
+  return new Response(getSingleNodeStream(processor, 'a65X6fcItmiROiBa0l05S'), {
     headers: {
       'content-type': 'text/event-stream; charset=utf-8',
     },

@@ -13,6 +13,16 @@ module.exports = {
       config.snapshot.managedPaths = [];
     }
 
+    config.module.rules.push({
+      test: /\.rivet-project$/,
+      type: 'asset/source',
+    });
+
+    config.module.rules.push({
+      test: /\.rivet-data$/,
+      type: 'asset/source',
+    });
+
     return config;
   },
 };
